@@ -1,0 +1,801 @@
+\documentclass[11pt]{article}
+\usepackage{amsfonts,amsthm,amsmath,amssymb, hyperref, dsfont, enumitem, bbm}
+\usepackage{array}
+\usepackage{epsfig}
+\usepackage{fullpage}
+\usepackage{color}
+\usepackage{epigraph}
+\renewcommand{\epigraphflush}{center}
+\usepackage[framemethod=tikz]{mdframed}
+\usepackage{titlesec}
+\usepackage{ellipsis}
+\usepackage{subcaption}
+\usepackage[normalem]{ulem}
+\usepackage{todonotes}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{clrscode3e,etoolbox}
+\usetikzlibrary{calc} 
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\ex}[2]{#1^{(#2)}}
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries}{}{0pt}{\Huge}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Structure
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Don't put chapter number in section numbers
+% \renewcommand*\thesection{\arabic{section}}	% commented out to include chapter number in section numbers
+
+\newcommand{\anchorednote}[2]{ #1 \note{#2} }	% anchored note - needed for latex2edx
+\newcommand{\note}[1]{\todo[color=blue!10,
+  linecolor=blue!90,size=\small]{\linespread{0.9}\selectfont{#1}\par}}
+
+\usepackage{tcolorbox}
+\newtcolorbox{examplebox}{colback=green!5!white}
+
+% \scalebox{1.5}{\begin{tikzpicture}
+%   % Put your tikz code here
+% \end{tikzpicture}}
+
+\newcommand\question[1]{\vskip0.05in\todo[inline, color=yellow!5]{{\bf
+      Study Question:}  #1}} 
+
+\def\myrightmargin{2.0in}
+
+% Make it compact for printing
+\renewcommand{\note}[1]{\footnote{#1}}
+\def\myrightmargin{1.0in}
+\usepackage[left=1in, top=1in, bottom=1in,right=\myrightmargin]{geometry}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Math macros
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Use to index over examples
+
+\newcommand\ex[2]{#1^{(#2)}}
+% Data sets
+\newcommand\data{{\cal D}}
+\newcommand\dataTrain{{\cal D}_n}
+\newcommand\dataTest{{\cal D}_{n'}}
+% Model, hypoth
+\newcommand\model{{\cal M}}
+\newcommand\hclass{{\cal H}}
+% Max likelihood
+\newcommand\ml[1]{#1_{\bf ml}}
+% Empirical risk min
+\newcommand\erm[1]{#1_{\bf erm}}
+% Arg max
+\newcommand\argmax[1]{{\rm arg}\max_{#1}}
+\newcommand\argmin[1]{{\rm arg}\min_{#1}}
+% Math
+\newcommand{\R}{\mathbb{R}}
+% errors
+\newcommand{\trainerr}{\mathcal{E}_n}
+\newcommand{\testerr}{\mathcal{E}}
+% sign
+\newcommand{\sign}{\text{sign}}
+% 2d vec
+\newcommand*{\twodrow}[2]{\begin{bmatrix} #1 & #2 \end{bmatrix}}
+\newcommand*{\twodcol}[2]{\begin{bmatrix} #1 \\ #2 \end{bmatrix}}
+% norm
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newcommand{\qn}[1]{\textcolor{orange}{Quynh: #1}}
+
+
+\begin{document}
+
+\input{allcommands}
+
+\handout{SEAS 2025}{{\bf July ..., 2025}}{Instructor: }{TA: }{Lecture 5: Neural networks}
+
+\emph{Note}: Based on MIT 6.036 - Intro to Machine Learning (Fall 2019) -- Adapted to SEAS by Nguyen Hoang, Nguyen Huynh, Hoang Nguyen, Quynh Nguyen, Nam Tran
+
+In charge: Nguyen nu
+
+
+% \section{The Perceptron Algorithm}
+% In lecture 4, we explored \textbf{KNN} classifiers, where each test instance is classified by looking at the labels of its nearest neighbors. One key property of KNN is that it treats all features equally when calculating distances. However, in many problems, some features may be more relevant than others. If we could assign weights to features that reflect their importance, we might be able to build better classifiers. 
+
+% In this section, we explore the \textbf{Perceptron algorithm} for learning weights for features. As we’ll see, learning weights for features amounts to learning a \textbf{hyperplane classifier} that separates the data space into two halves: all instances on one are predicted as positive, and those on the other as negative. In this sense, the perceptron can be seen as explicitly finding a good linear decision boundary.
+% \subsection{Error-Driven Updating: The Perceptron Algorithm}
+% The perceptron operates very differently from KNN. First, it is an \textit{online algorithm}, meaning it processes one training example at a time. Second, it is \textit{error-driven}: the model parameters (weights) are only updated when the model makes a mistake. If the model correctly classifies an example, it does nothing. \\
+
+% \noindent \textbf{Input:} Given an input vector $x \in \mathbb{R}^m$ and a label $y \in \{-1, +1\}$, \\
+% \noindent \textbf{Learning goal:} the perceptron attempts to find a weight vector $w \in \mathbb{R}^m$ and a bias term $b \in \mathbb{R}$ such that the sign of the linear function determines the class:
+% \[\hat{y} = \text{sign}(w \cdot x + b)\]
+% The goal is to learn $w$ and $b$ so that $\hat{y} = y$ for as many examples as possible. \\
+
+% \noindent \textbf{Initialization:}
+% The learning process begins with initializing the weights and bias to zero. \\
+% \noindent \textbf{Update Rule:} The algorithm proceeds to iterate through the training examples. For each example, it makes a prediction. If the prediction is incorrect, it updates the weights and bias.
+
+% If $y(w \cdot x + b) \leq 0$ ($y$ and $\hat{y}$ has different sign), then:
+% \[w \leftarrow w + yx \]
+% \[b \leftarrow b + y
+% \]
+
+% The logic here is simple: if we make a mistake, we move $w$ in the direction of the correct label. If $y = +1$ and we misclassify it as $-1$, we move $w$ toward $x$ to be more likely to classify it correctly next time.
+
+% \subsubsection*{Example}
+% Suppose we have two training examples:
+% \[
+% (x^{(1)} = [2, 1],\ y^{(1)} = +1) \\
+% (x^{(2)} = [-1, -1],\ y^{(2)} = -1)
+% \]
+% We initialize $w = [0, 0]$, $b = 0$.
+
+% \begin{enumerate}
+%     \item For $x^{(1)}$: 
+%     \[
+%     y(w \cdot x + b) = 1 \cdot (0 + 0) = 0 \Rightarrow \text{mistake}
+%     \]
+%     Update:
+%     \[
+%     w = [0,0] + 1 \cdot [2,1] = [2,1], \quad b = 0 + 1 = 1
+%     \]
+
+%     \item For $x^{(2)}$:
+%     \[
+%     y(w \cdot x + b) = (-1)((2)(-1) + (1)(-1) + 1) = (-1)(-2 -1 + 1) = (-1)(-2) = 2 > 0
+%     \]
+%     No update needed.
+% \end{enumerate}
+% \subsection{Perceptron Convergence and Linear Separability} \label{ML5:convergence}
+
+% A fundamental result about the Perceptron algorithm is that it is guaranteed to converge in a finite number of updates---\textbf{but only when the data is linearly separable}.
+
+% \medskip
+% \noindent
+% Let us clarify what this means:
+
+% \begin{itemize}
+%     \item \textbf{Linearly separable data} means that there exists some hyperplane (that is, a weight vector $w^*$ and a bias term $b^*$) such that:
+%     \[
+%     y_i(w^* \cdot x_i + b^*) > 0 \quad \text{for all training examples } (x_i, y_i).
+%     \]
+%     In other words, this hyperplane correctly classifies \emph{every} training point with a positive margin.
+
+%     If the training data is linearly separable, then the Perceptron algorithm will make a \textbf{finite} number of mistakes, and after some point, it will make no further updates. That is, it will eventually make an entire pass through the data without any errors.
+
+%     \item \textbf{Non-linearly separable data} means that no such hyperplane exists. In this case, it is impossible to find a straight line (or hyperplane) that completely separates the positive examples from the negative ones.
+
+    
+%     If the data is \textit{not} linearly separable, the perceptron algorithm will \textbf{never converge}. Since no perfect separating hyperplane exists, the algorithm will keep making errors and updating the weights indefinitely.
+    
+% \end{itemize}
+% \begin{center}
+% \begin{tikzpicture}[scale=1]
+%     \draw[->] (-0.5,0) -- (1.5,0) node[right] {$x_1$};
+%     \draw[->] (0,-0.5) -- (0,1.5) node[above] {$x_2$};
+
+%     % Points with XOR labels
+%     % \node at (0.5,0.5) {\large $-$}; % (0,0)
+%     % \node at (1.5,1.5) {\large $-$}; % (1,1)
+%     % \node at (0.5,1.5) {\large $+$}; % (0,1)
+%     % \node at (1.5,0.5) {\large $+$}; % (1,0)
+%     \node[circle, draw,fill=white, inner sep=0.1pt] at (0,0) {\bf $-$}; % (0,0)
+%      \node[circle, draw,fill=white, inner sep=0.1pt] at (1,1) {\bf$-$}; % (1,1)
+%      \node[circle, draw,fill=white, inner sep=0.1pt] at (0,1) {\bf$+$}; % (0,1)
+%      \node[circle, draw,fill=white, inner sep=0.1pt] at (1,0) {\bf$+$}; % (1,0)
+
+%     % Add coordinate labels
+%     \node[below left] at (-0.2,-0.2) {\scriptsize 0};
+%     \node[below] at (1,-0.2) {\scriptsize 1};
+%     \node[left] at (-0.2,1) {\scriptsize 1};
+%     % \node[above right] at (1,1) {\scriptsize (1,1)};
+% \end{tikzpicture}
+
+% \vspace{0.3em}
+
+% \small\textit{Figure 1: \textbf{XOR problem}: Output is $+$ when exactly one of the inputs is 1 else $-$.}
+
+% \end{center}
+
+% \subsection{Limitations}
+
+% As noted in \ref{ML5:convergence}, perceptrons are inherently \textit{linear} classifiers, which makes them fundamentally limited in their ability to solve problems where the decision boundary is non-linear. In particular, they fail on tasks like the XOR problem, where no single linear boundary can separate the positive and negative examples.
+% \paragraph{Feature Combinations}
+
+% To overcome this limitation, one approach is to transform the input space using \textbf{feature combinations}—that is, constructing new features by combining existing input features. For instance, the XOR problem can be solved by introducing a new input $x_1\cdot x_2$ (\textit{Homework: Try out yourself how!}). These combinations can take various forms, such as logical functions or polynomial terms, effectively enriching the input representation to make the problem linearly separable in the transformed space. We will not go in details about this approach in our bootcamp, but the approach has two main drawbacks:
+
+% \begin{itemize}
+%   \item Designing effective feature combinations is not straightforward and often relies on domain expertise or trial-and-error experimentation.
+%   \item The number of possible combinations grows rapidly with the number of input features. This can result in very high-dimensional feature spaces, which are computationally expensive and prone to overfitting.
+% \end{itemize}
+
+% \paragraph{Motivation Toward Neural Networks}
+
+% These limitations motivate the development of more flexible models. Rather than manually specifying feature combinations, \textbf{neural networks} are capable of \textit{learning} useful transformations and combinations of features directly from data. This ability enables them to model complex, non-linear decision boundaries in a scalable and systematic way, making them a powerful generalization of the perceptron.
+
+% \section{Neural Networks}
+
+Previously in lecture 2, we explored the {\em Perceptron algorithm} as a linear classifier. In today's lecture, we will extend the perceptron learning algorithm to handle non-linear decision boundaries. In the perceptron model, we thought of the input data point (e.g., an image) as being directly connected to an output (e.g., a label) through a single layer of weights---hence the term \textit{single-layer network}.
+
+Now, instead of directly connecting the inputs to the outputs, we will insert more layers of nodes, moving from a single-layer network to a \textit{multi-layer network}. By introducing non-linearity
+at inner layers, this will give us non-linear decision boundaries. In fact, this multi-layer network ---called \textbf{neural network}---can express a wide class of functions, far beyond what linear models can achieve. The trade-off for this expressive power is increased complexity in terms of parameter tuning, model design, and training.
+
+
+\section{Basic Element}
+
+A \textbf{neuron} (also called a \textbf{unit} or \textbf{node}) is the fundamental building block of neural networks. It takes an input vector \( \mathbf{x} \in \mathbb{R}^m \), computes a weighted sum with weights \( \mathbf{w} \in \mathbb{R}^m \) and bias \( w_0 \in \mathbb{R} \), and applies an \textbf{activation function} \( f : \mathbb{R} \rightarrow \mathbb{R} \) to produce an output:
+
+\[
+a = f(z) = f\left(\sum_{j=1}^m w_j x_j + w_0\right) = f(\mathbf{w}^\top \mathbf{x} + w_0)
+\]
+
+A classical \textbf{perceptron} is a special case where the activation function is the non-differentiable \texttt{sign} function:
+
+\[
+\hat{y} = \mathrm{sign}(\mathbf{w}^\top \mathbf{x} + w_0), \quad \hat{y} \in \{-1, +1\}
+\]
+
+This results in a binary linear classifier. In contrast, neural networks typically use smooth, differentiable activation functions (e.g., ReLU, sigmoid), enabling gradient-based optimization and multi-layer composition.
+
+
+A neuron pictured schematically:
+
+\begin{center}
+\begin{tikzpicture}[main node/.style={thick,circle,font=\Large}]
+  \node[main node,draw](sum) at (0,0) {$\sum$};
+  \node[main node](x1) at (-2,1) {$x_1$};
+  \node[main node](dots) at (-2,0) {$\vdots$};
+  \node[main node](xm) at (-2,-1) {$x_m$};
+  \coordinate (w0) at (0,-1.5);
+  \node[main node, draw] (f) at (2,0) {$f(\cdot)$};
+  \node[main node] (y) at (4,0) {$a$};
+
+  \draw[->, above right] (x1) -- node {$w_1$} (sum);
+  \draw (dots) -- node {} (sum);
+  \draw[->, below right] (xm) -- node {$w_m$} (sum);
+  \draw[above right] (w0) node {$w_0$} --  (sum) ;
+  \draw[->, above] (sum) -- node (z) {$z$} (f);
+  \draw[->, above] (f) -- (y);
+
+  \node[black!70] (inp) at ($(xm) + (0,-1.5)$) {input};
+  \node[black!70] (pre) at ($(z) + (0,1)$) {pre-activation};
+  \node[black!70] (out) at ($(y) + (0,1)$) {output};
+  \node[black!70] (act) at ($(f) - (0,1.5)$) {activation function};
+
+  \draw[->,black!70] (inp) -- (xm);
+  \draw[->,black!70] (pre) -- (z);
+  \draw[->,black!70] (out) -- (y);
+  \draw[->,black!70] (act) -- (f);
+\end{tikzpicture}
+\end{center}
+
+Before thinking about a whole network, we can consider how to train a
+single unit. Given a loss function $L(\text{guess}, \text{actual})$
+and a dataset $\{(\ex{x}{1}, \ex{y}{1}), \ldots,
+(\ex{x}{n},\ex{y}{n})\}$, we can 
+do (stochastic) gradient descent, adjusting the weights
+  $w, w_0$ to minimize
+    \[J(w, w_0) = \sum_{i} L\left(NN(\ex{x}{i}; w, w_0), \ex{y}{i}\right)\;\;.\]
+    where $NN$ is the output of our neural net for a given input.
+% A \textbf{neural network generalizes the perceptron} in several key ways:
+% \begin{itemize}
+%     \item It introduces \textbf{hidden layers} — intermediate layers of units between input and output.
+%     \item It replaces the non-differentiable sign activation function with \textbf{smooth, non-linear activation functions}.
+%     \item It \textbf{composes multiple layers}, enabling the model to represent complex, hierarchical functions.
+% \end{itemize}
+
+% Each layer in a neural network consists of multiple units operating in parallel. These units compute independently based on shared inputs, and their outputs become the inputs to the next layer.
+
+
+% \qn{Add a figure for NN here? -- Also say a few words why it's called `neural networks'}
+\section{Networks}
+Now, we'll put multiple neurons together into a {\bf network}.  A
+neural network in general takes in an input $x \in \R^m$ and generates
+an output $a \in \R^n$.  It is constructed out of multiple neurons;
+the inputs of each neuron might be elements of $x$ and/or outputs of
+other neurons.   The outputs are generated by $n$ {\em output units}.  
+
+In this lecture, we will only consider {\it feed-forward} networks.  In a feed-forward network, you can think of the network as defining a function-call graph that is {\em acyclic}:  that is, the input to a
+neuron can never depend on that neuron's output.  Data flows, one way,from the inputs to the outputs, and the function computed by the network is just a composition of the functions computed by the individual neurons.   
+
+Although the graph structure of a neural network can really be
+anything (as long as it satisfies the feed-forward constraint), for
+simplicity in software and analysis, we usually organize them into
+{\em layers}.   A layer is a group of neurons that are essentially
+``in parallel'':  their inputs are outputs of neurons in the previous
+layer, and their outputs are the input to the neurons in the next
+layer.   We'll start by describing a single layer, and then go on to
+the case of multiple layers.
+
+\subsection{Single layer}
+A {\bf layer} is a set of units that, as we have just described, are
+not connected to each other. The layer is called
+{\em fully connected} if, as in the diagram below, the inputs to each
+unit in the layer are the same (i.e. $x_1, x_2, \ldots x_m$ in this
+case).  A layer has input $x \in \R^m$ and output (also known as
+{\em activation}) $a \in \R^n$.
+
+\begin{center}
+\begin{tikzpicture}[main node/.style={circle}]
+  \coordinate (soff) at (0,1.4);
+  \node[main node,draw](s1) at ($2*(soff)$) {$\sum$};
+  \node[main node,draw](s2) at (soff) {$\sum$};
+  \node[main node,draw](s3) at (0,0) {$\sum$};
+  \node[main node](sdots) at ($(0,0)-(soff)$) {$\vdots$};
+  \node[main node,draw](sn) at ($(0,0)-2*(soff)$) {$\sum$};
+
+  % inputs
+  \coordinate (x) at (-2,0);
+  \coordinate (xoff) at (0,1);
+  \node[main node](x1) at ($(x) + 1.5*(xoff)$) {$x_1$};
+  \node[main node](x2) at ($(x) + .5*(xoff)$) {$x_2$};
+  \node[main node](xdots) at ($(x) - .5*(xoff)$) {$\vdots$};
+  \node[main node](xm) at ($(x) - 1.5*(xoff)$) {$x_m$};
+
+  % activations
+  \coordinate (foff) at (1.5,0);
+  \node[main node, draw](f1) at ($(s1) + (foff)$) {$f$};
+  \node[main node, draw](f2) at ($(s2) + (foff)$) {$f$};
+  \node[main node, draw](f3) at ($(s3) + (foff)$) {$f$};
+  \node[main node] at ($(sdots) + (foff)$) {$\vdots$};
+  \node[main node, draw](fn) at ($(sn) + (foff)$) {$f$};
+
+  % outputs
+  \node[main node](y1) at ($(s1) + 2*(foff)$) {$a_1$};
+  \node[main node](y2) at ($(s2) + 2*(foff)$) {$a_2$};
+  \node[main node](y3) at ($(s3) + 2*(foff)$) {$a_3$};
+  \node[main node] at ($(sdots) + 2*(foff)$) {$\vdots$};
+  \node[main node](yn) at ($(sn) + 2*(foff)$) {$a_n$};
+
+  % arrows
+  \foreach \b in {(s1), (s2), (s3), (sn)}
+    \foreach \a in {(x1), (x2), (xm)}
+      \draw[->] \a -- \b;
+  \foreach \x/\y/\z in {(s1)/(f1)/(y1), (s2)/(f2)/(y2),
+    (s3)/(f3)/(y3), (sn)/(fn)/(yn)}{
+    \draw[->] \x -- \y;
+    \draw[->] \y -- \z;
+  }
+  %\foreach \x in {(s1), (s2), (s3), (sn)}
+  %  \draw \x -- +(0,-.65);
+  \node[main node, ,below left] (weights) at ($(xm)!0.5!(sn)$)
+    {$W,W_0$};
+\end{tikzpicture}
+\end{center}
+Since each unit has a vector of weights and a single offset, we can
+think of the weights of the whole layer as a matrix, $W$, and the
+collection of  all the offsets as a vector $W_0$.  
+If we have $m$ inputs, $n$ units, and $n$ outputs, then
+\begin{itemize}
+  \item $W$ is an $m\times n$ matrix, 
+  \item $W_0$ is an $n \times 1$ column vector, 
+  \item $X$, the input, is an $m \times 1$ column vector, 
+  \item $Z = W^T X + W_0$, the {\em pre-activation}, is an $n \times
+    1$ column vector, 
+  \item $A$, the {\em activation}, is an $n \times 1$ column vector, 
+\end{itemize}
+and the output vector is 
+\[A = f(Z) = f(W^TX + W_0)\;\;.\]
+The activation function $f$ is applied element-wise to the
+pre-activation values $Z$.
+
+What can we do with a single layer?  We have already seen single-layer
+networks, in the form of linear separators and linear regressors.  All
+we can do with a single layer is make a linear hypothesis.
+The whole reason for
+moving to neural networks is to move in the direction of {\em
+  non-linear} hypotheses.  To do this, we will have to consider
+multiple layers, where we can view the last layer as still being a
+linear classifier or regressor, but where we interpret the previous
+layers as learning a non-linear feature transformation $\phi(x)$,
+rather than having us hand-specify it.
+
+\subsection{Many layers}
+A single neural network generally combines multiple layers, most
+typically by feeding the outputs of one layer into the inputs of
+another layer.
+
+We have to start by establishing some nomenclature.  We will use $l$
+to name a layer, and let $m^l$ be the number of inputs to the
+layer and $n^l$ be the number of outputs from the layer.  
+Then, $W^l$ and $W^l_0$ are of shape $m^l \times
+n^l$ and $n^l \times 1$, respectively. Note that the input to layer $l$ is the output from layer $l-1$, so we have $m^l= n^{l-1}$, and as a result $A^{l-1}$ is of shape $m^l \times 1$,  or equivalently $n^{l-1} \times 1$. Let $f^l$ be
+the activation function of layer $l$. Then, the pre-activation outputs are the $n^l \times 1$
+vector
+\[Z^l = {W^l}^TA^{l-1} + W^l_0\]
+and the activation outputs are simply the $n^l \times 1$ vector
+\[A^l = f^l(Z^l)\;\;.\]
+
+Here's a diagram of a many-layered network, with two blocks
+for each layer, one representing the linear part of the operation and
+one representing the non-linear activation function.  We will use this
+structural decomposition to organize our algorithmic thinking and
+implementation. 
+
+\begin{center}
+\begin{tikzpicture}
+  \coordinate (x) at (0,0);
+  \node[inner sep=0em] (w1) at (1.7,0)
+    {\begin{tabular}{c} $W^1$ \\ $W^1_0$\end{tabular}};
+  \node[inner sep=1em] (f1) at ($2*(w1)$) {$f^1$};
+  \node[inner sep=0em] (w2) at ($3*(w1)$)
+    {\begin{tabular}{c} $W^2$ \\ $W^2_0$\end{tabular}};
+  \node[inner sep=1em] (f2) at ($4*(w1)$) {$f^2$};
+  \node (dots) at ($5*(w1)$) {$\cdots$};
+  \node[inner sep=0em] (wL) at ($6*(w1)$)
+    {\begin{tabular}{c} $W^L$ \\ $W^L_0$\end{tabular}};
+  \node[inner sep=1em] (fL) at ($7*(w1)$) {$f^L$};
+  \coordinate (y) at ($8*(w1) - (.3,0)$);
+
+  \draw[->] (x) -- node[above] {$X = A^0$} (w1);
+  \draw[->] (w1) -- node[above] {$Z^1$} (f1);
+  \draw[->] (f1) -- node[above] {$A^1$} (w2);
+  \draw[->] (w2) -- node[above] {$Z^2$} (f2);
+  \draw[->] (f2) -- node[above] {$A^2$} (dots);
+  \draw[->] (dots) -- node[above] {$A^{L-1}$} (wL);
+  \draw[->] (wL) -- node[above] {$Z^L$} (fL);
+  \draw[->] (fL) -- node[above] {$A^L$} (y);
+
+  \draw [decorate,decoration={brace,mirror,amplitude=10pt}]
+    ($(w1) + (-.4, -.7)$) -- node[yshift=-1.8em] {layer 1}
+    ($(f1) + (.4,-.7)$);
+  \draw [decorate,decoration={brace,mirror,amplitude=10pt}]
+    ($(w2) + (-.4, -.7)$) -- node[yshift=-1.8em] {layer 2}
+    ($(f2) + (.4,-.7)$);
+  \draw [decorate,decoration={brace,mirror,amplitude=10pt}]
+    ($(wL) + (-.4, -.7)$) -- node[yshift=-1.8em] {layer $L$}
+    ($(fL) + (.4,-.7)$);
+
+
+  \foreach \point in {w1, f1, w2, f2, wL, fL}{
+    \draw ($(\point) + (-.3,-.5)$) rectangle ($(\point) + (.3,.5)$);
+  }
+\end{tikzpicture}
+\end{center}
+\subsection{Expressive Power of a Neural Network}
+
+\paragraph{Universal Approximation}
+
+Under mild conditions on the activation function (e.g., non-constant, bounded, and continuous), a feedforward network with a single hidden layer containing a sufficient number of neurons can approximate any continuous function on a compact subset of $\mathbb{R}^n$ to arbitrary precision—this is known as the \textbf{universal approximation theorem}.
+The expressive power of a neural network—its ability to approximate complex functions—depends critically on its \textbf{depth} (the number of layers) and \textbf{width} (the number of neurons per layer). 
+
+\textbf{Deeper networks} can represent more abstract and hierarchical features, which is particularly beneficial in domains such as computer vision and natural language processing. Each successive layer can build on features learned in the previous ones, allowing the network to capture complex structures in the data. However, deeper architectures are also more challenging to train due to problems like vanishing or exploding gradients, and they require careful initialization, normalization, and optimization strategies (e.g., batch normalization, skip connections, or advanced optimizers like Adam).
+
+\textbf{Wider networks}, on the other hand, increase the capacity of the model by enabling it to learn more variations in the data at each layer. While width can compensate to some extent for lack of depth (due to the universal approximation theorem), excessively wide networks may lead to overfitting, especially when trained on limited data. They also tend to be less parameter-efficient than deep models for learning compositional functions.
+
+In practice, striking the right balance between depth and width is crucial. It often involves empirical tuning and may be guided by theoretical insights, task complexity, and available computational resources. Proper regularization techniques—such as dropout, weight decay, and data augmentation—are essential to prevent overfitting.
+
+\section{Choices of activation function}
+
+There are many possible choices for the activation function.  We will
+start by thinking about whether it's really necessary to have an $f$
+at all.
+
+What happens if we let $f$ be the identity?  Then, in a network with
+$L$ layers (we'll leave out $W_0$ for simplicity, but keeping it
+wouldn't change the form of this argument), 
+\[A^L = {W^L}^T A^{L-1} = 
+ {W^L}^T {W^{L-1}}^T \cdots {W^1}^T X\;\;.\]
+So, multiplying out the weight matrices, we find that 
+\[A^L = W^\text{total}X\;\;,\]
+which is a {\em linear} function of $X$!
+Having all those layers did not change the representational
+capacity of the network: the non-linearity of the activation function
+is crucial.
+\question{Convince yourself that any function representable by any
+  number of linear layers (where $f$ is the identity function) can be
+  represented by a single layer.}
+
+Now that we are convinced we need a non-linear activation, let's
+examine a few common choices.
+\begin{description}
+  \item{\bf Step function:} 
+    $$\text{step}(z) =
+    \begin{cases}
+      0 & \text{if $z<0$}\\
+      1 & \text{otherwise}
+    \end{cases}$$
+  \item{\bf Rectified linear unit (ReLU):} 
+    $$\text{ReLU}(z) =
+    \begin{cases}
+      0 & \text{if $z<0$}\\
+      z & \text{otherwise}
+    \end{cases} = \max(0,z)$$ 
+  \item{\bf Sigmoid function:} Also known as a {\em logistic} function, can
+    be interpreted as probability, because for any value of $z$ the
+    output is in $(0, 1)$
+    $$\sigma(z) = \frac{1}{1+e^{-z}}$$
+  \item{\bf Hyperbolic tangent:} Always in the range $(-1, 1)$
+ $$\tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}}$$
+\item{\bf Softmax function:}
+Takes a whole vector $Z \in \R^n$ and generates as output a vector
+$A \in (0, 1)^n$ with the property that $\sum_{i = 1}^n A_i = 1$,
+which means we can interpret it as a probability distribution over $n$ items:
+\[\text{softmax}(z) =
+  \begin{bmatrix}
+    \exp(z_1) / \sum_{i} \exp(z_i) \\
+    \vdots \\
+    \exp(z_n) / \sum_{i} \exp(z_i)
+\end{bmatrix}\]
+
+\end{description}
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    name=topleft,
+    axis lines=middle, axis equal image,
+    xmin=-2, xmax=2,
+    ymin=-.5, ymax=1.5,
+    xlabel={$z$}, ylabel={$\text{step}(z)$},
+]
+\addplot [domain=-2:0, samples=2, ultra thick] {0}; 
+\addplot [domain=0:2, samples=2, ultra thick] {1};
+\end{axis}
+
+\begin{axis}[
+    name=topright,
+    axis lines=middle, axis equal image,
+    xmin=-2, xmax=2,
+    ymin=-.5, ymax=1.5,
+    xlabel={$z$}, ylabel={$\text{ReLU}(z)$},
+    at = (topleft.east), anchor=west, xshift=.7cm
+]
+\addplot [domain=-2:0, samples=2, ultra thick] {0}; 
+\addplot [domain=0:2, samples=2, ultra thick] {x};
+\end{axis}
+
+\begin{axis}[
+    name=bottomleft,
+    axis lines=middle, %axis equal image,
+    xmin=-4, xmax=4,
+    ymin=-1.25, ymax=1.25,
+    xlabel={$z$}, ylabel={$\sigma(z)$},
+    at = (topleft.south), anchor=north, yshift=-.7cm
+]
+\addplot [domain=-4:4, samples=100, ultra thick] {1/(1+exp(-x))};
+\addplot [domain=-4:4, samples=2, dashed] {1};
+\addplot [domain=-4:4, samples=2, dashed] {0};
+\end{axis}
+
+\begin{axis}[
+    name=bottomright,
+    axis lines=middle, %axis equal image,
+    xmin=-4, xmax=4,
+    ymin=-1.25, ymax=1.25,
+    xlabel={$z$}, ylabel={$\tanh(z)$},
+    at = (bottomleft.east), anchor=west, xshift=.7cm
+]
+\addplot [domain=-4:4, samples=100, ultra thick]
+  {(exp(x) - exp(-x))/(exp(x) + exp(-x))};
+\addplot [domain=-4:4, samples=2, dashed] {1};
+\addplot [domain=-4:4, samples=2, dashed] {-1};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+The original idea for neural networks involved using the {\bf step}
+function as an activation, but because the derivative of the
+step function is zero everywhere except at the discontinuity
+(and there it is undefined), gradient-descent methods won't be useful
+in finding a good setting of the weights, and so we won't
+consider them further.  They have been replaced, in a sense, by the
+sigmoid, relu, and tanh activation functions.
+
+
+ReLUs are especially common in internal (``hidden'') layers, and
+sigmoid activations are common for the output for binary
+classification and softmax for multi-class classification
+% \subsection{Components of a Neural Network}
+
+
+% \qn{Add a few words about `deep learning'?}
+
+
+\section{Error back-propagation}
+We will train neural networks using gradient descent methods.  It's
+possible to use {\em batch} gradient descent, in which we sum up the
+gradient over all the points or
+stochastic gradient descent ({\sc sgd}), in which we take a small step with
+respect to the gradient considering a single point at a time).
+
+Our notation is going to get pretty hairy pretty quickly.  To keep it
+as simple as we can, we'll focus on computing the contribution of one
+data point $\ex{x}{i}$ to the gradient of the loss with respect to the
+weights, for {\sc sgd}; you can simply sum up these gradients over all
+the data points if you wish to do batch descent.
+
+So, to do {\sc sgd} for a training example $(x, y)$, we need to
+compute $\nabla_W \text{Loss}(NN(x;W),y)$, 
+where $W$ represents all weights $W^l, W_0^l$ in all the layers $l =
+(1, \ldots, L)$. This seems terrifying,
+but is actually quite easy to do using the chain rule. 
+Remember that we are always computing the gradient of the loss
+function {\em with respect to the weights} for a particular value of
+$(x,  y)$.  That tells us how much we want to change the weights, in
+order to reduce the loss incurred on this particular training example.
+
+First, let's see how the loss depends on the weights in the final
+layer, $W^L$.  Remembering that our output is $A^L$, and using the
+shorthand $\text{loss}$ to stand for $\text{Loss}((NN(x;W),y)$ which
+is equal to $\text{Loss}(A^L, y)$, and finally that $A^L = f^L(Z^L)$ and
+$Z^L = {W^L}^T A^{L-1} +W_0^L$, we can use the chain rule, stated informally as:
+\[
+  \frac{\partial \text{loss}}{\partial W^L} = \underbrace{
+  \frac{\partial \text{loss}}{\partial A^L}}_{\text{depends on loss
+  function}} \cdot
+  \underbrace{\frac{\partial A^L}{\partial Z^L}}_{f^{L'}} \cdot
+  \underbrace{\frac{\partial Z^L}{\partial W^L}}_{\text{$A^{L-1}$}}
+\;\;.\]
+  
+To actually get  the dimensions to match, we need to write this a bit
+more carefully, and note that it is true for any $l$, including $l =  L$:
+\begin{equation}
+\label{eq:gradloss}
+  \underbrace{\frac{\partial \text{loss}}{\partial W^l}}_{m^l \times n^l}  =  
+\underbrace{A^{l-1}}_{m^l \times 1} \;
+\underbrace{\left(\frac{\partial \text{loss}}{\partial
+                                              Z^l}\right)^T}_{1 \times n^l}
+\end{equation}
+
+Yay!  So, in order to find the gradient of the loss with respect to the
+weights in the other layers of the network, we just need to be able to
+find $\partial \text{loss}/\partial{Z^l}$.  
+
+If we repeatedly apply
+the chain rule, we get this expression for the gradient of the loss
+with respect to the pre-activation in the first layer, again stated informally as:
+\begin{equation}
+\label{eq:gradzfirst}
+  \frac{\partial \text{loss}}{\partial Z^1} = \underbrace{\underbrace{
+  \frac{\partial \text{loss}}{\partial A^L} \cdot
+  \frac{\partial A^L}{\partial Z^L} \cdot
+  \frac{\partial Z^L}{\partial A^{L-1}} \cdot
+  \frac{\partial A^{L-1}}{\partial Z^{L-1}} \cdot \cdots \cdot
+  \frac{\partial A^2}{\partial Z^2}}_{\partial \text{loss} / \partial Z^2}
+  \cdot \frac{\partial Z^2}{\partial A^1}}
+  _{\partial \text{loss} / \partial A^1} \cdot
+  \frac{\partial A^1}{\partial Z^1} \;\;.
+\end{equation}
+This derivation was informal, to show  you the general structure of
+the computation.  In fact, to get the dimensions to all work out, we
+just have to write it backwards!  Let's first understand more about
+these quantities:
+\begin{itemize}
+\item $\partial \text{loss}/\partial A^L$ is $n^L \times 1$ and
+  depends on the particular loss function you are using.
+\item $\partial Z^l / \partial A^{l-1}$ is $m^l \times n^l$ and is
+  just $W^l$ (you can verify this by computing a single entry
+  $\partial Z^l_i / \partial A^{l-1}_j$).
+\item $\partial A^l/\partial Z^l$ is $n^l \times n^l$.  It's a little
+  tricky to think about.  Each element 
+  $a_i^l = f^l(z_i^l)$.
+    This means that $\partial a_i^l / \partial
+  z_j^l = 0$ whenever $i \not = j$.  So, the off-diagonal elements of 
+  $\partial A^l/\partial Z^l$ are all 0, and the diagonal elements are 
+  $\partial a_i^l / \partial  z_j^l = {f^l}'(z_j^l)$.  
+\end{itemize}
+Now, we can rewrite equation~\ref{eq:gradzfirst} so that the quantities
+match up as
+\begin{equation}
+\label{eq:gradz}
+%\frac{\partial \text{loss}}{\partial A^{l-1}} = 
+%W^l \cdot 
+\frac{\partial \text{loss}}{\partial Z^l} = 
+\frac{\partial A^l}{\partial Z^l} \cdot 
+W^{l+1} \cdot \frac{\partial A^{l+1}}{\partial Z^{l+1}} \cdot \ldots
+W^{L-1} \cdot \frac{\partial A^{L-1}}{\partial Z^{L-1}} \cdot 
+W^{L} \cdot \frac{\partial A^{L}}{\partial Z^{L}} \cdot
+\frac{\partial \text{loss}}{\partial A^L}
+\end{equation}
+
+Using equation~\ref{eq:gradz} to compute $\partial \text{loss}/\partial{Z^l}$
+combined with equation~\ref{eq:gradloss}, lets us find the gradient
+of the  loss with respect to any of the weight matrices.
+\question{Apply the same reasoning to find the gradients of
+  $\text{loss}$ with respect to $W_0^l$.}
+
+This general process is called {\em error back-propagation}.  The idea
+is that we first do a {\em forward pass} to compute all the $a$ and
+$z$ values at all the layers, and finally the actual loss on this
+example.  Then, we can work backward and compute the gradient of the
+loss with respect to the weights in each layer, starting at layer $L$
+and going back to layer 1. 
+
+\begin{center}
+\begin{tikzpicture}[scale=.98]
+  \coordinate (x) at (0,0);
+  \node[inner sep=0em] (w1) at (1.7,0)
+    {\begin{tabular}{c} $W^1$ \\ $W^1_0$\end{tabular}};
+  \node[inner sep=1em] (f1) at ($2*(w1)$) {$f^1$};
+  \node[inner sep=0em] (w2) at ($3*(w1)$)
+    {\begin{tabular}{c} $W^2$ \\ $W^2_0$\end{tabular}};
+  \node[inner sep=1em] (f2) at ($4*(w1)$) {$f^2$};
+  \node (dots) at ($5*(w1)$) {$\cdots$};
+  \node[inner sep=0em] (wL) at ($6*(w1)$)
+    {\begin{tabular}{c} $W^L$ \\ $W^L_0$\end{tabular}};
+  \node[inner sep=1em] (fL) at ($7*(w1)$) {$f^L$};
+  \node (loss) at ($8*(w1)$) {Loss};
+  \coordinate (y) at ($8*(w1) + (0,1.5)$);
+
+  \draw[->] (x) -- node[above] {$X = A^0$} (w1);
+  \draw[->] (w1) -- node[above] {$Z^1$} (f1);
+  \draw[->] (f1) -- node[above] {$A^1$} (w2);
+  \draw[->] (w2) -- node[above] {$Z^2$} (f2);
+  \draw[->] (f2) -- node[above] {$A^2$} (dots);
+  \draw[->] (dots) -- node[above] {$A^{L-1}$} (wL);
+  \draw[->] (wL) -- node[above] {$Z^L$} (fL);
+  \draw[->] (fL) -- node[above] {$A^L$} (loss);
+  \draw[->] (y) -- node[right] {$y$} ($(loss)+(0,.65)$);
+
+  %\draw[->,yshift=0.5cm] (loss.west) to [out=150,in=30] (fL.east);
+  \foreach \s/\e/\t in {loss/fL/A^L,
+                        fL/wL/Z^L,
+                        wL/dots/A^{L-1},
+                        dots/f2/A^2,
+                        f2/w2/Z^2,
+                        w2/f1/A^1,
+                        f1/w1/Z^1}{
+  \path[->] ($(\s.west) - (0,.5)$) edge[out=210,in=-30] node[below]
+    {$\frac{\partial \text{loss}}{\partial \t}$}
+    ($(\e.east) - (0,.5)$);
+  }
+  \foreach \point in {w1, f1, w2, f2, wL, fL}{
+    \draw ($(\point) + (-.3,-.5)$) rectangle ($(\point) + (.3,.5)$);
+  }
+  \draw ($(loss) + (-.4,-.5)$) rectangle ($(loss) + (.4,.5)$);
+\end{tikzpicture}
+\end{center}
+
+If we view our neural network as a sequential composition of modules
+(in our work so far, it has been an alternation between a linear
+transformation with a weight matrix, and a component-wise application
+of a non-linear activation function), then we can define a simple API
+for a module that will let us compute the forward and backward passes,
+as well as do the necessary weight updates for gradient descent.  Each
+module has to provide the following ``methods.''  We are already using
+letters $a, x, y, z$ with particular meanings, so here we will use $u$
+as the vector input to the module and $v$ as the vector output:
+\begin{itemize}
+  \item forward: $u \rightarrow v$
+  \item backward: $u, v, \partial L /
+    \partial v \rightarrow \partial L / \partial u$
+  \item weight grad: $u, \partial L / \partial v \rightarrow \partial L
+    / \partial W$  only needed for modules that have weights $W$
+\end{itemize}
+
+
+\paragraph{Efficiency and Reuse}
+
+Backpropagation is computationally efficient because it reuses intermediate results from the forward pass during the backward pass. Despite the intimidating name, it is essentially a smart application of the chain rule, and the structure of the computation allows for efficient gradient updates even in large networks.
+
+\paragraph{Differentiability}
+
+A key requirement for backpropagation is that all operations in the network must be differentiable. This is why we use smooth activation functions like sigmoid, tanh, or ReLU (which is piecewise linear but differentiable almost everywhere).
+
+
+
+
+
+
+
+
+
+\end{document}

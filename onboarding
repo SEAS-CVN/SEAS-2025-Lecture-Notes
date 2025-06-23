@@ -1,0 +1,45 @@
+2025 SEAS Teaching Team Onboarding
+Welcome to SEAS! We’re thrilled to have you on board as we work together to expand education access for students in central Vietnam. Your contributions will make a real impact, and we can't wait to collaborate with you!
+
+1. Code of Conduct
+SEAS is a diverse community that includes high school students, local teachers, and volunteers. We ask that you treat everyone with respect and professionalism—while also enjoying yourself! Learning and teaching should be fun, so don’t be afraid to bring positive energy and enthusiasm to the team!
+
+2. Communication Guidelines
+We primarily communicate in a mix of English and Vietnamese—feel free to use whichever language is most comfortable for you and your team members.
+
+If you have any concerns (harassment, feedback, etc.), you can:
+
+✅ Reach out to any BTC member directly.
+
+✅ Share your thoughts in the SEAS-General chat.
+
+✅ Email us at seas.cvn@gmail.com.
+
+3. Overleaf (Lecture Notes)
+We use Overleaf for writing lecture notes. Please request access from BTC and ensure you're properly added to the project.
+
+4. Google Drive (Administrative Tasks)
+All administrative tasks, such as meetings and scheduling, are managed through Google Drive. Ask BTC to grant you access and verify that you're added to the shared folder.
+
+5. Group Chats
+You should have been added to these two group chats on Messenger:
+
+SEAS-General – for overall team discussions.
+
+SEAS-Teaching – for teaching-related discussions.
+
+If you’re interested in the Media/Marketing side of SEAS (SEAS-Media), you can request to be added to that group as well.
+
+6. Meetings
+The teaching team meets weekly, typically on Saturdays or Sundays, depending on everyone’s availability. These meetings are where we discuss responsibilities, lesson plans, and task allocations. Please make sure to attend!
+
+7. Action Item: Add Yourself to the SEAS Website
+Website: https://seas-cvn.com
+
+As a Teaching Assistant, we expect you to familiarize yourself with how the website works. Please add your profile by submitting a Pull Request (PR) to: GitHub Repository: https://github.com/SEAS-CVN/seas-cvn.github.io/tree/master
+
+To do this:
+
+Add a new markdown file in the _team directory: Link to directory. Upload your profile picture and link it accordingly.
+
+Welcome to SEAS! We’re excited to have you as part of our community and look forward to working with you!

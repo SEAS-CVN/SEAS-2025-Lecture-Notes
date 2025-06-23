@@ -1,0 +1,258 @@
+\documentclass[11pt]{article}
+\usepackage{amsfonts,amsthm,amsmath,amssymb, hyperref, dsfont, enumitem, bbm}
+\usepackage{array}
+\usepackage{epsfig}
+\usepackage{fullpage}
+\usepackage{color}
+\usepackage{epigraph}
+\renewcommand{\epigraphflush}{center}
+\usepackage[framemethod=tikz]{mdframed}
+\usepackage{titlesec}
+\usepackage{ellipsis}
+\usepackage{subcaption}
+\usepackage[normalem]{ulem}
+\usepackage{todonotes}
+
+
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries}{}{0pt}{\Huge}
+
+\newif\ifdetails % fill in details that are omitted in lecture handout version
+
+
+\newcommand{\qn}[1]{\todo[inline, color=brown!30]{Quynh: #1}}
+
+\detailstrue %Change to detailsfalse when removing text
+
+\begin{document}
+
+\input{allcommands}
+
+\handout{SEAS 2025}{{\bf July ..., 2025}}{Instructor: }{TA: }{Lecture 2: Vector spaces and Linear transformations}
+
+\section{Vector spaces}
+
+Last time, we familiarized ourselves with the basics: scalars, vectors, matrices, and how to perform some operations with them. We saw they're not just abstract numbers but tools used in computer graphics, machine learning, and much more. Today, we're going to explore the place where vectors live, called \textbf{vector spaces}, and then meet some very special and useful types of matrices.
+
+\subsection{$\mathbb{R}^n$}
+
+You'll remember from last time that a vector is an ordered list of numbers, like $\mathbf{v} = \begin{pmatrix} 2 \\ 3 \end{pmatrix}$ or $\mathbf{u} = \begin{pmatrix} 1 \\ 0 \\ -5 \end{pmatrix}$.
+When we talk about $\mathbb{R}^n$, we're defining the set of all possible vectors that have $n$ real number entries.
+
+To get a sense of what it is, let's consider simplest cases:
+\begin{itemize}
+    \item $\mathbb{R}^1$ (or just $\mathbb{R}$) is the space of all vectors with one component, like $(x_1)$. This is just our familiar number line!
+    \item $\mathbb{R}^2$ is the space of all vectors with two components, like $\begin{pmatrix} x_1 \\ x_2 \end{pmatrix}$. This corresponds to all the points on a 2D Cartesian plane (your standard x-y graph). Each vector can be thought of as an arrow from the origin to the point $(x_1, x_2)$.
+    \item $\mathbb{R}^3$ is the space of all vectors with three components, $\begin{pmatrix} x_1 \\ x_2 \\ x_3 \end{pmatrix}$. This is the 3D space we live in, with x, y, and z axes.
+\end{itemize}
+So, $\mathbb{R}^n$ is the generalization of this idea to $n$ dimensions. A vector in $\mathbb{R}^n$ looks like $\mathbf{x} = \begin{pmatrix} x_1 \\ x_2 \\ \vdots \\ x_n \end{pmatrix}$, where each $x_i$ is a real number.
+
+\subsection{Motivation for high dimensions}
+
+You might be thinking, "Okay, 1D, 2D, and 3D make sense, but why would we ever need $\mathbb{R}^4$ or $\mathbb{R}^{100}$? We can't even picture that!" And you're right, visualizing it directly is tough, but high-dimensional spaces are very useful. Even if we can't "see" these high dimensions in the same way we see 3D, thinking of data as vectors in $\mathbb{R}^n$ allows us to use the powerful tools of linear algebra to analyze and understand complex information.
+
+\subsection{Into higher dimensions}
+
+So how do we even begin to conceptualize something beyond three dimensions? We can't physically point to a "fourth spatial dimension" in our everyday experience.
+But instead of trying to visualize it, we can rely on analogy. Imagine a 2D being living on a flat plane (like a character in an old video game). They can understand length and width, but height (the 3rd dimension) would be a strange, abstract concept. They might see 3D objects passing through their plane as changing 2D shapes. We are in a similar position with 4D or higher dimensions. We can see "slices" or "projections" (like a shadow of a 3D object is a 2D shape).
+
+ The rules of geometry and vector algebra that work in $\mathbb{R}^2$ and $\mathbb{R}^3$ (like how to add vectors, find distances, calculate angles using dot products) can be extended to $\mathbb{R}^n$. We trust the math to guide our understanding. For example, two vectors in $\mathbb{R}^{57}$ are "orthogonal" (perpendicular) if their dot product is zero, even if we can't picture them. We focus on the relationships between these high-dimensional vectors and how they transform, rather than trying to form a complete mental image of the space itself. It's more about using the algebraic framework to work with these multi-component objects effectively.
+
+\section{The Structure of Vector Spaces: Dependence, Span, Basis, and Inner Product}
+
+Now that we have a sense of $\mathbb{R}^n$, let's explore some fundamental concepts that describe the structure within these spaces.
+
+\subsection{Linear combinations}
+A \textbf{linear combination} of vectors $\mathbf{v}_1, \mathbf{v}_2, \dots, \mathbf{v}_k$ is any vector that can be formed by scaling them by some scalars $c_1, c_2, \dots, c_k$ and adding them up:
+\[ \mathbf{w} = c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \dots + c_k\mathbf{v}_k \]
+
+\subsection{Linear Dependence and Independence}
+This is a crucial idea. A set of vectors is \textbf{linearly dependent} if at least one of the vectors in the set can be written as a linear combination of the others. In simpler terms, one of them is "redundant" because it doesn't add any new direction or dimension that the others can't already achieve. If no vector in the set can be written as a linear combination of the others, then the set is \textbf{linearly independent}.
+
+Formally, a set of vectors $\{\mathbf{v}_1, \mathbf{v}_2, \dots, \mathbf{v}_k\}$ is linearly dependent if there exist scalars $c_1, c_2, \dots, c_k$, \textit{not all zero}, such that:
+\[ c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \dots + c_k\mathbf{v}_k = \mathbf{0} \quad (\text{the zero vector}) \]
+If the only way to make this sum zero is by choosing $c_1 = c_2 = \dots = c_k = 0$, then the vectors are linearly independent.
+
+Let's consider an example in $\mathbb{R}^2$
+Let $\mathbf{v}_1 = \begin{pmatrix} 1 \\ 2 \end{pmatrix}$, $\mathbf{v}_2 = \begin{pmatrix} 2 \\ 4 \end{pmatrix}$. These are linearly dependent because $\mathbf{v}_2 = 2\mathbf{v}_1$. We can write $2\mathbf{v}_1 - \mathbf{v}_2 = \mathbf{0}$, so $c_1=2, c_2=-1$ (not all zero).
+Now consider $\mathbf{v}_1 = \begin{pmatrix} 1 \\ 0 \end{pmatrix}$, $\mathbf{v}_2 = \begin{pmatrix} 0 \\ 1 \end{pmatrix}$. These are linearly independent. The only way $c_1\begin{pmatrix} 1 \\ 0 \end{pmatrix} + c_2\begin{pmatrix} 0 \\ 1 \end{pmatrix} = \begin{pmatrix} c_1 \\ c_2 \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix}$ is if $c_1=0$ and $c_2=0$.
+
+Linearly independent vectors each contribute a unique "direction" to the space they can describe.
+
+\subsection{Span}
+The \textbf{span} of a set of vectors $\{\mathbf{v}_1, \mathbf{v}_2, \dots, \mathbf{v}_k\}$ is the set of \textbf{all} possible linear combinations of these vectors. It's the entire region or space that you can "reach" or "generate" using just those vectors and scalar multiplication/addition.
+
+\begin{example}
+    \begin{itemize}
+    \item The span of a single non-zero vector $\mathbf{v}$ in $\mathbb{R}^2$ or $\mathbb{R}^3$ is a line through the origin in the direction of $\mathbf{v}$. (e.g., all vectors $c\mathbf{v}$).
+    \item The span of two linearly independent vectors in $\mathbb{R}^3$ is a plane passing through the origin.
+    \item If a set of vectors spans the entire space $\mathbb{R}^n$, it means any vector in $\mathbb{R}^n$ can be written as a linear combination of those vectors.
+\end{itemize}
+\end{example}
+
+\subsection{Basis}
+Now we combine the ideas of linear independence and span. A \textbf{basis} for a vector space (like $\mathbb{R}^n$) is a set of vectors that satisfies two conditions:
+\begin{enumerate}
+    \item The vectors are \textbf{linearly independent}. (No redundancy)
+    \item The vectors \textbf{span} the entire space. (They can reach everywhere)
+\end{enumerate}
+A basis is like the most efficient set of building blocks for a space. You have just enough vectors, and they're all pointing in fundamentally different directions.
+
+The standard basis for $\mathbb{R}^n$ consists of $n$ vectors, where each vector has a single 1 in one position and 0s everywhere else.
+For $\mathbb{R}^2$, the standard basis is $\left\{ \mathbf{e}_1 = \begin{pmatrix} 1 \\ 0 \end{pmatrix}, \mathbf{e}_2 = \begin{pmatrix} 0 \\ 1 \end{pmatrix} \right\}$. These are your familiar x-axis and y-axis unit vectors.
+For $\mathbb{R}^3$, it's $\left\{ \mathbf{e}_1 = \begin{pmatrix} 1 \\ 0 \\ 0 \end{pmatrix}, \mathbf{e}_2 = \begin{pmatrix} 0 \\ 1 \\ 0 \end{pmatrix}, \mathbf{e}_3 = \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix} \right\}$. (x, y, z unit vectors).
+
+An important fact: every basis for a particular vector space has the \textit{same number of vectors}. This number is called the \textbf{dimension} of the vector space. So, the dimension of $\mathbb{R}^n$ is $n$.
+
+\subsection{Linear transformations}
+
+So far, we've been talking about vectors as objects that live in spaces like $\mathbb{R}^n$, and we've explored concepts like how to combine them (span) and how to find the most efficient set of building blocks for a space (basis). Now, let's think about how we can systematically change or \textit{transform} these vectors and, by extension, the spaces they inhabit. This is where the idea of a \textbf{linear transformation} comes in.
+
+Imagine you have a rule, let's call it $T$, that takes any vector from one vector space (say, $\mathbb{R}^n$) and gives you a new vector, possibly in a different vector space (say, $\mathbb{R}^m$). This rule $T$ is a "transformation." But what makes it a "linear" transformation? A transformation $T$ is linear if it fits with the two main operations we have with vectors: addition and scalar multiplication. In other words, it maps vectors to vectors. Specifically, two conditions must hold:
+
+\begin{enumerate}
+    \item \textbf{It preserves addition:} If you add two vectors $\mathbf{u}$ and $\mathbf{v}$ first, and then apply the transformation $T$ to their sum, you get the same result as if you applied $T$ to $\mathbf{u}$ and $\mathbf{v}$ individually and then added the resulting transformed vectors. Mathematically, $T(\mathbf{u} + \mathbf{v}) = T(\mathbf{u}) + T(\mathbf{v})$.
+    \item \textbf{It preserves scalar multiplication:} If you scale a vector $\mathbf{u}$ by a scalar $c$ first, and then apply the transformation $T$, you get the same result as if you applied $T$ to $\mathbf{u}$ first and then scaled the resulting transformed vector by $c$. Mathematically, $T(c\mathbf{u}) = cT(\mathbf{u})$.
+\end{enumerate}
+
+Think of it like this: a linear transformation doesn't "warp" space arbitrarily. If we visualize the space as grid points in the direction of basis vectors, grid lines should remain parallel and evenly spaced (though their spacing and orientation might change). The origin $\mathbf{0}$ always stays at the origin (because $T(\mathbf{0}) = T(0 \cdot \mathbf{u}) = 0 \cdot T(\mathbf{u}) = \mathbf{0}$). Common examples of linear transformations in 2D or 3D include rotations around the origin, reflections across a line or plane, scaling (stretching or shrinking), and shearing (like pushing the top of a deck of cards).
+
+Now, here's the really powerful connection: \textbf{every linear transformation $T$ from $\mathbb{R}^n$ to $\mathbb{R}^m$ can be represented by an $m \times n$ matrix!} Let's call this matrix $\mathbf{A}$. Applying the transformation $T$ to a vector $\mathbf{x}$ is then equivalent to simply multiplying the matrix $\mathbf{A}$ by the vector $\mathbf{x}$:
+\[ T(\mathbf{x}) = \mathbf{A}\mathbf{x} \]
+This means that the abstract idea of a linear rule can be made concrete through matrix multiplication, which we already learned how to do!
+
+How do we find this magic matrix $\mathbf{A}$ for a given linear transformation $T$? It's surprisingly straightforward. We just need to see what the transformation $T$ does to the \textbf{standard basis vectors} of the input space $\mathbb{R}^n$. Let $\mathbf{e}_1, \mathbf{e}_2, \dots, \mathbf{e}_n$ be the standard basis vectors for $\mathbb{R}^n$. The columns of our matrix $\mathbf{A}$ are precisely the transformed versions of these basis vectors:
+\[ \mathbf{A} = \begin{pmatrix} | & | & & | \\ T(\mathbf{e}_1) & T(\mathbf{e}_2) & \dots & T(\mathbf{e}_n) \\ | & | & & | \end{pmatrix} \]
+So, the first column of $\mathbf{A}$ is $T(\mathbf{e}_1)$, the second column is $T(\mathbf{e}_2)$, and so on. Once you have this matrix $\mathbf{A}$, you can find where \textit{any} vector $\mathbf{x}$ goes under the transformation $T$ just by computing $\mathbf{A}\mathbf{x}$. This works because any vector $\mathbf{x}$ can be written as a linear combination of the basis vectors, and $T$ preserves these linear combinations.
+
+\begin{example}
+    Suppose we have a linear transformation $T: \mathbb{R}^2 \to \mathbb{R}^2$ that rotates every vector $90^\circ$ counterclockwise around the origin.
+Let's see what it does to the standard basis vectors $\mathbf{e}_1 = \begin{pmatrix} 1 \\ 0 \end{pmatrix}$ and $\mathbf{e}_2 = \begin{pmatrix} 0 \\ 1 \end{pmatrix}$.
+\begin{itemize}
+    \item Rotating $\mathbf{e}_1$ (which points along the positive x-axis) by $90^\circ$ counterclockwise makes it point along the positive y-axis. So, $T(\mathbf{e}_1) = \begin{pmatrix} 0 \\ 1 \end{pmatrix}$.
+    \item Rotating $\mathbf{e}_2$ (which points along the positive y-axis) by $90^\circ$ counterclockwise makes it point along the negative x-axis. So, $T(\mathbf{e}_2) = \begin{pmatrix} -1 \\ 0 \end{pmatrix}$.
+\end{itemize}
+Therefore, the matrix $\mathbf{A}$ for this rotation is:
+\[ \mathbf{A} = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix} \]
+Now, if you want to rotate any vector, say $\mathbf{x} = \begin{pmatrix} 2 \\ 3 \end{pmatrix}$, by $90^\circ$ counterclockwise, you just compute:
+\[ T(\mathbf{x}) = \mathbf{A}\mathbf{x} = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix} \begin{pmatrix} 2 \\ 3 \end{pmatrix} = \begin{pmatrix} (0)(2) + (-1)(3) \\ (1)(2) + (0)(3) \end{pmatrix} = \begin{pmatrix} -3 \\ 2 \end{pmatrix} \]
+You can verify that this is the correct result of the rotation.
+\end{example}
+
+This link between linear transformations and matrices is fundamental and allows us to use all our matrix algebra tools to understand and manipulate geometric transformations and other linear operations.
+
+\subsection{Inner Product}
+In $\mathbb{R}^n$, the most common \textbf{inner product} (also often called the \textbf{dot product} which we might have touched on) between two vectors $\mathbf{u} = \begin{pmatrix} u_1 \\ \vdots \\ u_n \end{pmatrix}$ and $\mathbf{v} = \begin{pmatrix} v_1 \\ \vdots \\ v_n \end{pmatrix}$ is defined as:
+\[ \langle \mathbf{u}, \mathbf{v} \rangle = \mathbf{u} \cdot \mathbf{v} = u_1v_1 + u_2v_2 + \dots + u_nv_n = \sum_{i=1}^n u_i v_i \]
+The inner product gives us a scalar. It's useful because it helps us define geometric concepts:
+\begin{itemize}
+    \item \textbf{Length (or Norm):} The length of a vector $\mathbf{u}$ is $\|\mathbf{u}\| = \sqrt{\langle \mathbf{u}, \mathbf{u} \rangle} = \sqrt{u_1^2 + u_2^2 + \dots + u_n^2}$.
+    \item \textbf{Angle:} The angle $\theta$ between two non-zero vectors $\mathbf{u}$ and $\mathbf{v}$ can be found using $\langle \mathbf{u}, \mathbf{v} \rangle = \|\mathbf{u}\| \|\mathbf{v}\| \cos\theta$.
+    \item \textbf{Orthogonality:} Two vectors $\mathbf{u}$ and $\mathbf{v}$ are orthogonal (perpendicular) if their inner product is zero: $\langle \mathbf{u}, \mathbf{v} \rangle = 0$.
+\end{itemize}
+The inner product has some key properties:
+\begin{enumerate}
+    \item \textbf{Symmetry:} $\langle \mathbf{u}, \mathbf{v} \rangle = \langle \mathbf{v}, \mathbf{u} \rangle$.
+    \item \textbf{Linearity in the first argument:}
+        $\langle \mathbf{u} + \mathbf{v}, \mathbf{w} \rangle = \langle \mathbf{u}, \mathbf{w} \rangle + \langle \mathbf{v}, \mathbf{w} \rangle$
+        and $\langle k\mathbf{u}, \mathbf{v} \rangle = k \langle \mathbf{u}, \mathbf{v} \rangle$ for a scalar $k$.
+\end{enumerate}
+Since it's symmetric, linearity in the first argument implies linearity in the second argument as well. This combined property is called \textbf{bilinearity}.
+
+\begin{exercise}
+    Let $\mathbf{u} = \begin{pmatrix} u_1 \\ u_2 \end{pmatrix}$, $\mathbf{v} = \begin{pmatrix} v_1 \\ v_2 \end{pmatrix}$, $\mathbf{w} = \begin{pmatrix} w_1 \\ w_2 \end{pmatrix}$ be vectors in $\mathbb{R}^2$, and let $k$ be a scalar.
+Show explicitly that:
+\begin{enumerate}
+    \item $\langle \mathbf{u} + \mathbf{v}, \mathbf{w} \rangle = \langle \mathbf{u}, \mathbf{w} \rangle + \langle \mathbf{v}, \mathbf{w} \rangle$
+    \item $\langle k\mathbf{u}, \mathbf{v} \rangle = k \langle \mathbf{u}, \mathbf{v} \rangle$
+\end{enumerate}
+\end{exercise}
+
+
+\section{Some important square matrices}
+
+We're going to narrow our focus now to \textbf{square real matrices} (matrices with the same number of rows and columns, and all entries are real numbers). There are a few types that have special structures and properties, making them extremely useful.
+
+\subsection{Diagonal Matrices}
+A \textbf{diagonal matrix} is a square matrix where all the entries \textit{off} the main diagonal are zero. The entries \textit{on} the main diagonal can be anything (including zero).
+\[ \mathbf{D} = \begin{pmatrix}
+d_{11} & 0 & \dots & 0 \\
+0 & d_{22} & \dots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \dots & d_{nn}
+\end{pmatrix} \]
+\textbf{Example:} $\begin{pmatrix} 3 & 0 & 0 \\ 0 & -2 & 0 \\ 0 & 0 & 5 \end{pmatrix}$ is a $3 \times 3$ diagonal matrix.
+
+Diagonal matrices are great because they simplify many operations:
+\begin{itemize}
+    \item Multiplying diagonal matrices is just multiplying corresponding diagonal entries.
+    \item The powers of a diagonal matrix $\mathbf{D}^k$ are found by simply raising each diagonal entry to the power $k$. (show this!)
+    \item Their eigenvalues are just the diagonal entries (we'll learn about eigenvalues later).
+\end{itemize}
+
+\subsection{Orthonormal Matrices}
+An \textbf{orthonormal matrix} $\mathbf{Q}$ is a square matrix with a useful property: its transpose is also its inverse.
+\[ \mathbf{Q}^T\mathbf{Q} = \mathbf{Q}\mathbf{Q}^T = \mathbf{I} \quad (\text{where } \mathbf{I} \text{ is the identity matrix}) \]
+This has some important consequences. Firstly, the columns of an \textbf{orthonormal} matrix form an \textbf{orthonormal basis}. This means each column vector has a length of 1 (they are "\textbf{normal}"), and they are all mutually \textbf{ortho}gonal (their dot product is 0). The same is true for the rows. As a result, geometric intuition tells us that when we multiply a vector by an orthogonal matrix, it corresponds to a \textbf{rotation} around the origin or a \textbf{reflection}, or a combination of these.
+
+Crucially, orthogonal matrices \textbf{preserve lengths of vectors and angles between vectors}. If you transform vectors $\mathbf{x}$ and $\mathbf{y}$ by $\mathbf{Q}$ to get $\mathbf{Qx}$ and $\mathbf{Qy}$, the length of $\mathbf{Qx}$ is the same as $\mathbf{x}$, and the angle between $\mathbf{Qx}$ and $\mathbf{Qy}$ is the same as the angle between $\mathbf{x}$ and $\mathbf{y}$.
+
+Because angles are preserved, the inner product itself is preserved.
+
+\begin{exercise}[Inner product preservation by orthogonal matrices]
+    Let $\mathbf{Q}$ be an $n \times n$ orthogonal matrix, and let $\mathbf{x}, \mathbf{y}$ be vectors in $\mathbb{R}^n$.
+Prove that $\langle \mathbf{Qx}, \mathbf{Qy} \rangle = \langle \mathbf{x}, \mathbf{y} \rangle$.
+
+\textbf{Hint:} Remember that the inner product $\langle \mathbf{u}, \mathbf{v} \rangle$ can be written as $\mathbf{u}^T \mathbf{v}$. Also, recall the transpose property $(\mathbf{A}\mathbf{B})^T = \mathbf{B}^T\mathbf{A}^T$, and the definition $\mathbf{Q}^T\mathbf{Q} = \mathbf{I}$.
+\end{exercise}
+
+
+\subsection{Symmetric Matrices}
+A \textbf{symmetric matrix} is a square matrix $\mathbf{A}$ that is equal to its own transpose:
+\[ \mathbf{A} = \mathbf{A}^T \]
+This means that the entry in the $i$-th row and $j$-th column is the same as the entry in the $j$-th row and $i$-th column ($a_{ij} = a_{ji}$). The matrix is symmetric about its main diagonal.
+\begin{example}
+    $\mathbf{A} = \begin{pmatrix} 1 & 7 & -2 \\ 7 & 5 & 0 \\ -2 & 0 & 3 \end{pmatrix}$. If you flip this across its main diagonal, it stays the same.
+\end{example}
+
+Symmetric matrices can be found in many areas of mathematics. For example, \textbf{covariance matrices} in statistics are symmetric. They describe how different variables vary together.
+They are also fundamental in describing quadratic forms (expressions like $ax^2 + by^2 + cxy$).
+
+% \section{Vector spaces}
+% \begin{itemize}
+%     \item Define $\mathbb{R}^n$
+%     \item Motivate why high dimensions?
+%     \item Few words about how to visualize $>3$ dimensions.
+% \end{itemize}
+
+
+
+
+% \section{Linear dependence, span, basis}
+% TODO: copy chap 2.4 of \href{https://www.deeplearningbook.org/contents/linear_algebra.html}{this book}
+
+
+
+% \section{Inner product and norms}
+
+% Exercise: verify bilinearity of inner product
+
+
+% \section{Special matrices}
+% We'll restrict to square real matrices.
+
+% \subsection{Diagonal matrices}
+% \subsection{Orthogonal matrices}
+% Exercise: prove inner product is perserved 
+
+% \subsection{Symmetric matrices}
+
+% \subsection{Stochastic matrices}
+% Link to Markov chains
+% \qn{Maybe this is not needed here}
+
+
+
+
+
+\end{document}

@@ -1,0 +1,184 @@
+\documentclass[11pt]{article}
+\usepackage{amsfonts,amsthm,amsmath,amssymb, hyperref, dsfont, enumitem, bbm}
+\usepackage{array}
+\usepackage{epsfig}
+\usepackage{fullpage}
+\usepackage{color}
+\usepackage{epigraph}
+\renewcommand{\epigraphflush}{center}
+\usepackage[framemethod=tikz]{mdframed}
+\usepackage{titlesec}
+\usepackage{ellipsis}
+\usepackage{subcaption}
+\usepackage[normalem]{ulem}
+\usepackage{todonotes}
+
+
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries}{}{0pt}{\Huge}
+
+\newif\ifdetails % fill in details that are omitted in lecture handout version
+
+
+\newcommand{\qn}[1]{\todo[inline, color=brown!30]{Quynh: #1}}
+
+\detailstrue %Change to detailsfalse when removing text
+
+\begin{document}
+
+\input{allcommands}
+
+\handout{SEAS 2025}{{\bf July ..., 2025}}{Instructor: }{TA: }{Lecture 1: Intro to Linear Algebra}
+
+\section{Motivation}
+
+\section{The Basic Ingredients: Scalars, Vectors, and Matrices}
+
+\subsection{Scalars}
+
+You're already totally familiar with \textbf{scalars}, even if you haven't called them that before. A scalar is essentially just a single, ordinary number. In this course, you can think of it at some real number.
+
+\subsection{Vectors}
+
+A \textbf{vector} is an ordered list of numbers. You can think of a vector as something that has both magnitude and, often, a sense of direction within some kind of space. For instance, if I told you to "walk 4 steps East and then 3 steps North," that instruction could be represented as a vector. If we imagine East is along an x-axis and North along a y-axis, we could write this as $\begin{pmatrix} 4 \\ 3 \end{pmatrix}$. This vector tells us not just the total distance, but the specific path in two directions. (add a figure here)
+
+We typically write vectors using lowercase bold letters, like $\mathbf{v}, \mathbf{u},$ or $\mathbf{x}$, or sometimes with a little arrow on top, like $\vec{v}$. You'll most often see them written as a column of numbers:
+\[ \mathbf{v} = \begin{pmatrix} v_1 \\ v_2 \\ \vdots \\ v_n \end{pmatrix} \]
+Those numbers inside, $v_1, v_2,$ and so on, up to $v_n$, are called the \textbf{components} or \textbf{entries} of the vector. The \textbf{dimension} of a vector is just how many components it has. So, $\begin{pmatrix} 4 \\ 3 \end{pmatrix}$ is a 2-dimensional vector (we say it's in $\mathbb{R}^2$), while $\begin{pmatrix} 7 \\ -2 \\ 5 \end{pmatrix}$ is a 3-dimensional vector (it's in $\mathbb{R}^3$).
+
+\subsection{Matrices}
+
+So, what if we need to handle a whole bunch of numbers, or maybe even a collection of vectors, all at once? That's where \textbf{matrices} come into play. A matrix is simply a rectangular grid, or array, of numbers, all arranged in rows and columns. If you've ever used Excell, you've basically been looking at a matrix!
+
+Let's think about some applications. A digital grayscale image, for example, can be represented as a matrix. Each number in the matrix could correspond to the brightness of a tiny dot, or pixel, in the image. A black pixel might be represented by 0, a white one by 255, and all the shades of gray would be numbers in between. So, a tiny little image might look like this matrix:
+\[ \text{Image Matrix} = \begin{pmatrix} 20 & 60 & 210 \\ 110 & 160 & 30 \\ 15 & 240 & 80 \end{pmatrix} \]
+
+You've also encountered systems of linear equations, like $2x + 3y = 7$ and $x - y = 1$. The numbers in front of $x$ and $y$ (the coefficients) can be arranged into a matrix like this: $\begin{pmatrix} 2 & 3 \\ 1 & -1 \end{pmatrix}$. As we'll learn later, matrices provide a very powerful way to solve these kinds of systems.
+
+We usually denote matrices with uppercase bold letters, such as $\mathbf{A}, \mathbf{B},$ or $\mathbf{X}$. A general matrix $\mathbf{A}$ would look something like this:
+\[ \mathbf{A} = \begin{pmatrix}
+a_{11} & a_{12} & \dots & a_{1n} \\
+a_{21} & a_{22} & \dots & a_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+a_{m1} & a_{m2} & \dots & a_{mn}
+\end{pmatrix} \]
+
+When we talk about the \textbf{dimension} of a matrix $\mathbf{A}$, we're referring to its size, specifically its number of rows and columns. If a matrix has $m$ rows and $n$ columns, we call it an $m \times n$ matrix (which we read as an "$m$ by $n$ matrix"). The individual numbers inside the matrix are its entries. We use a special notation for them: $a_{ij}$ refers to the entry that's in the $i$-th row and the $j$-th column. The first little number (the subscript $i$) always tells you the row, and the second one ($j$) tells you the column.
+
+Let's take an example. Suppose we have a matrix $\mathbf{B} = \begin{pmatrix} 2 & -3 & 6 \\ 1 & 5 & 0 \end{pmatrix}$. This matrix $\mathbf{B}$ has 2 rows and 3 columns, so it's a $2 \times 3$ matrix. If we look at its entries, $b_{11}$ (1st row, 1st column) is $2$. The entry $b_{13}$ (1st row, 3rd column) is $6$. And $b_{22}$ (2nd row, 2nd column) is $5$.
+
+It's also handy to know a few special terms for certain types of matrices, which we'll explore more later. A \textbf{square matrix} is one that has an equal number of rows and columns, for example, a $3 \times 3$ matrix. A \textbf{column vector}, which we've already seen, can also be thought of as a matrix that has many rows but only one column (an $m \times 1$ matrix). Similarly, a \textbf{row vector} is a matrix with only one row (a $1 \times n$ matrix).
+
+\section{Basic operations on matrices}
+
+Okay, now that we know what scalars, vectors, and matrices are, we can start to see how we can actually do some math with them.
+
+\subsection{Tranposition}
+One important operation on matrices is thetranspose. The transpose of amatrix is the mirror image of the matrix across a diagonal line, called the main diagonal, running down and to the right, starting from its upper left corner. See figure 2.1 (add figure) for a graphical depiction of this operation. We denote the transpose of amatrix $A$ as $A^\intercal$, and it is deﬁned such that
+\begin{align*}
+    (A^\intercal)_{i,j} = A_{j, i}
+\end{align*}
+
+\subsection{The Trace of a Matrix: Summing the Diagonal}
+
+Here's another operation we can perform, but this one only applies to \textbf{square matrices} (remember, those are matrices with the same number of rows and columns, like $2 \times 2$, $3 \times 3$, etc.). It's called the \textbf{trace} of a matrix.
+
+The trace of a square matrix, often written as $\text{tr}(\mathbf{A})$, is just the sum of the elements on its \textbf{main diagonal}. The main diagonal is the one that runs from the top-left corner down to the bottom-right corner.
+
+So, if you have a square matrix $\mathbf{A}$:
+\[ \mathbf{A} = \begin{pmatrix}
+a_{11} & a_{12} & \dots & a_{1n} \\
+a_{21} & a_{22} & \dots & a_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+a_{n1} & a_{n2} & \dots & a_{nn}
+\end{pmatrix} \]
+Then its trace is:
+\[ \text{tr}(\mathbf{A}) = a_{11} + a_{22} + \dots + a_{nn} \]
+You just pick out those diagonal entries and add them up!
+
+Let's look at an example:
+\begin{example}
+    
+\end{example}
+Suppose we have the matrix $\mathbf{A} = \begin{pmatrix} 7 & 2 & 3 \\ 1 & 5 & 9 \\ 6 & 8 & 4 \end{pmatrix}$.
+This is a $3 \times 3$ square matrix. To find its trace, we look at the elements on the main diagonal: $7, 5,$ and $4$.
+So, the trace of $\mathbf{A}$ is:
+\[ \text{tr}(\mathbf{A}) = 7 + 5 + 4 = 16 \]
+
+What if we have a $2 \times 2$ matrix, say $\mathbf{B} = \begin{pmatrix} -1 & 10 \\ 3 & 6 \end{pmatrix}$?
+The main diagonal elements are $-1$ and $6$.
+So, $\text{tr}(\mathbf{B}) = -1 + 6 = 5$.
+
+The trace has some interesting properties that become important in more advanced topics, especially in areas like machine learning and physics. For instance, one handy property is that the trace of a sum of two square matrices is the sum of their traces: $\text{tr}(\mathbf{A} + \mathbf{B}) = \text{tr}(\mathbf{A}) + \text{tr}(\mathbf{B})$. Also, for a scalar $k$, $\text{tr}(k\mathbf{A}) = k \cdot \text{tr}(\mathbf{A})$. And a particularly useful one is that $\text{tr}(\mathbf{A}\mathbf{B}) = \text{tr}(\mathbf{B}\mathbf{A})$, even though $\mathbf{A}\mathbf{B}$ isn't usually equal to $\mathbf{B}\mathbf{A}$! For now, just knowing how to calculate it is a great start.
+
+\subsection{Addition and Subtraction}
+
+Adding or subtracting two matrices is quite straightforward, but there's one important rule: the matrices \textbf{must have exactly the same dimensions}. If they don't match up in size, you can't add or subtract them (also, it doesn't make sense to add or subtract two different objects). Assuming they do have the same dimensions, you just add (or subtract) the numbers in the corresponding positions.
+
+\textbf{Example:}
+If $\mathbf{A} = \begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}$ and $\mathbf{B} = \begin{pmatrix} 5 & 6 \\ 7 & 8 \end{pmatrix}$, then
+\[ \mathbf{A} + \mathbf{B} = \begin{pmatrix} 1+5 & 2+6 \\ 3+7 & 4+8 \end{pmatrix} = \begin{pmatrix} 6 & 8 \\ 10 & 12 \end{pmatrix} \]
+If $\mathbf{C} = \begin{pmatrix} 0 & -1 \\ 2 & 5 \end{pmatrix}$ and $\mathbf{D} = \begin{pmatrix} 3 & 1 \\ -1 & 4 \end{pmatrix}$, then
+\[ \mathbf{C} - \mathbf{D} = \begin{pmatrix} 0-3 & -1-1 \\ 2-(-1) & 5-4 \end{pmatrix} = \begin{pmatrix} -3 & -2 \\ 3 & 1 \end{pmatrix} \]
+
+What if $\mathbf{A} = \begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}$ and $\mathbf{E} = \begin{pmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{pmatrix}$?
+We cannot add or subtract $\mathbf{A}$ and $\mathbf{E}$ because they have different dimensions ($\mathbf{A}$ is $2 \times 2$, $\mathbf{E}$ is $2 \times 3$).
+
+\subsection{Scalar Multiplication: Scaling a Matrix}
+
+Multiplying a whole matrix by a single scalar (just a number) is also quite intuitive. You simply take that scalar and multiply every single entry within the matrix by it. If $k$ is our scalar and $\mathbf{A} = \begin{pmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{pmatrix}$, then the scalar multiplication $k\mathbf{A}$ looks like this:
+\[ k\mathbf{A} = k \begin{pmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{pmatrix} = \begin{pmatrix} k \cdot a_{11} & k \cdot a_{12} \\ k \cdot a_{21} & k \cdot a_{22} \end{pmatrix} \]
+For instance, if we have the scalar $k=2$ and the matrix $\mathbf{A} = \begin{pmatrix} 3 & 5 \\ -1 & 0 \end{pmatrix}$, then $2\mathbf{A} = 2 \begin{pmatrix} 3 & 5 \\ -1 & 0 \end{pmatrix} = \begin{pmatrix} 2 \cdot 3 & 2 \cdot 5 \\ 2 \cdot (-1) & 2 \cdot 0 \end{pmatrix} = \begin{pmatrix} 6 & 10 \\ -2 & 0 \end{pmatrix}$. This operation is often thought of as "scaling" the matrix.
+
+\subsection{Matrix multiplication}
+
+Now, multiplying one matrix by another matrix is where things get a bit more involved – and a lot more powerful! It's not as simple as just multiplying the entries that are in the same position (that's a different kind of multiplication called the Hadamard product, which we won't be focusing on today).
+
+Here's the crucial rule for matrix multiplication: to be able to multiply a matrix $\mathbf{A}$ by a matrix $\mathbf{B}$ (to get a new matrix $\mathbf{C} = \mathbf{A}\mathbf{B}$), the number of \textbf{columns in the first matrix ($\mathbf{A}$) must be equal to the number of rows in the second matrix ($\mathbf{B}$)}. If this condition is met, say $\mathbf{A}$ is an $m \times n$ matrix (meaning $m$ rows, $n$ columns) and $\mathbf{B}$ is an $n \times p$ matrix ($n$ rows, $p$ columns), then their product $\mathbf{C} = \mathbf{A}\mathbf{B}$ will be an $m \times p$ matrix. So the resulting matrix gets its number of rows from the first matrix and its number of columns from the second.
+
+How do we find each entry in the resulting matrix $\mathbf{C}$? Well, the entry $c_{ij}$ (which is in the $i$-th row and $j$-th column of $\mathbf{C}$) is calculated by a "dot product" process. You take the $i$-th row from matrix $\mathbf{A}$ and the $j$-th column from matrix $\mathbf{B}$. You then multiply their corresponding elements together, and finally, you sum up all those products.
+
+Let's try to visualize this. If row $i$ of $\mathbf{A}$ looks like $(a_{i1}, a_{i2}, \dots, a_{in})$ and column $j$ of $\mathbf{B}$ looks like $\begin{pmatrix} b_{1j} \\ b_{2j} \\ \vdots \\ b_{nj} \end{pmatrix}$, then the entry $c_{ij}$ in the product matrix $\mathbf{C} = \mathbf{A}\mathbf{B}$ is found by:
+\[ c_{ij} = (a_{i1} \cdot b_{1j}) + (a_{i2} \cdot b_{2j}) + \dots + (a_{in} \cdot b_{nj}) \]
+This can also be written more compactly using summation notation as $c_{ij} = \sum_{k=1}^{n} a_{ik}b_{kj}$.
+
+This process is illustrated in Figure (add a figure that visualizes the operation).
+
+\textbf{Example 1: $2 \times 2$ matrices}
+Let $\mathbf{A} = \begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}$ (a $2 \times 2$ matrix) and $\mathbf{B} = \begin{pmatrix} 5 & 6 \\ 7 & 8 \end{pmatrix}$ (a $2 \times 2$ matrix).
+Since the number of columns in $\mathbf{A}$ (which is 2) equals the number of rows in $\mathbf{B}$ (which is 2), we can multiply them. The result $\mathbf{C} = \mathbf{A}\mathbf{B}$ will be a $2 \times 2$ matrix.
+
+Let $\mathbf{C} = \begin{pmatrix} c_{11} & c_{12} \\ c_{21} & c_{22} \end{pmatrix}$.
+\begin{itemize}
+    \item $c_{11}$: (1st row of $\mathbf{A}$) $\cdot$ (1st column of $\mathbf{B}$) = $(1 \cdot 5) + (2 \cdot 7) = 5 + 14 = 19$
+    \item $c_{12}$: (1st row of $\mathbf{A}$) $\cdot$ (2nd column of $\mathbf{B}$) = $(1 \cdot 6) + (2 \cdot 8) = 6 + 16 = 22$
+    \item $c_{21}$: (2nd row of $\mathbf{A}$) $\cdot$ (1st column of $\mathbf{B}$) = $(3 \cdot 5) + (4 \cdot 7) = 15 + 28 = 43$
+    \item $c_{22}$: (2nd row of $\mathbf{A}$) $\cdot$ (2nd column of $\mathbf{B}$) = $(3 \cdot 6) + (4 \cdot 8) = 18 + 32 = 50$
+\end{itemize}
+So, $\mathbf{C} = \mathbf{A}\mathbf{B} = \begin{pmatrix} 19 & 22 \\ 43 & 50 \end{pmatrix}$.
+
+A really important thing to remember about matrix multiplication is that the \textbf{order matters}. Unlike multiplying regular numbers where $2 \times 3$ is the same as $3 \times 2$, for matrices, $\mathbf{A}\mathbf{B}$ is generally \textbf{not} the same as $\mathbf{B}\mathbf{A}$.  In fact, sometimes $\mathbf{A}\mathbf{B}$ might be possible to calculate, but $\mathbf{B}\mathbf{A}$ might not even be defined if the dimensions don't line up correctly in the reverse order.
+
+You might be wondering why matrix multiplication is defined in this seemingly complicated way. It turns out this method is incredibly useful. It allows us to represent complex operations like rotations, scaling, and shearing of objects in computer graphics, and it's key to solving systems of linear equations in a very compact and efficient manner, among many other things.
+
+\subsection{Properties of Matrix Operations}
+Let $\mathbf{A}, \mathbf{B}, \mathbf{C}$ be matrices of appropriate dimensions, and let $k, l$ be scalars.
+\begin{enumerate}
+    \item (Commutativity of Addition) $\mathbf{A} + \mathbf{B} = \mathbf{B} + \mathbf{A}$
+    \item (Associativity of Addition) $(\mathbf{A} + \mathbf{B}) + \mathbf{C} = \mathbf{A} + (\mathbf{B} + \mathbf{C})$
+    \item (Existence of Zero Matrix) There's a matrix $\mathbf{0}$ (all entries are zero) such that $\mathbf{A} + \mathbf{0} = \mathbf{A}$.
+    \item (Existence of Additive Inverse) For any matrix $\mathbf{A}$, there's a matrix $-\mathbf{A}$ (where each entry is the negative of $\mathbf{A}$'s entries) such that $\mathbf{A} + (-\mathbf{A}) = \mathbf{0}$.
+
+    \item (Associativity of Scalar Multiplication) $(kl)\mathbf{A} = k(l\mathbf{A})$
+    \item (Distributivity of Scalar over Matrix Addition) $k(\mathbf{A} + \mathbf{B}) = k\mathbf{A} + k\mathbf{B}$
+    \item (Distributivity of Matrix over Scalar Addition) $(k+l)\mathbf{A} = k\mathbf{A} + l\mathbf{A}$
+
+    \item (Associativity of Matrix Multiplication) $(\mathbf{A}\mathbf{B})\mathbf{C} = \mathbf{A}(\mathbf{B}\mathbf{C})$ (if dimensions are compatible)
+    \item (Distributivity of Matrix Multiplication over Matrix Addition)
+        \begin{itemize}
+            \item $\mathbf{A}(\mathbf{B} + \mathbf{C}) = \mathbf{A}\mathbf{B} + \mathbf{A}\mathbf{C}$ (Left distributive)
+            \item $(\mathbf{A} + \mathbf{B})\mathbf{C} = \mathbf{A}\mathbf{C} + \mathbf{B}\mathbf{C}$ (Right distributive)
+        \end{itemize}
+    \item (\textbf{NOT} Commutative (in general)) $\mathbf{A}\mathbf{B} \neq \mathbf{B}\mathbf{A}$
+\end{enumerate}
+\end{document}

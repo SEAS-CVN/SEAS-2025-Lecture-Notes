@@ -1,0 +1,153 @@
+\DeclareMathOperator{\argmin}{argmin}
+\DeclareMathOperator{\argmax}{argmax}
+\usepackage{dsfont}
+\newcommand{\KL}[2]{D_{\mathrm{KL}}(\,#1\;||\;#2)}
+\newcommand{\indep}{\perp \!\!\! \perp}
+\newcommand{\mle}{{\mathrm{MLE}}}
+\newcommand{\map}{{\mathrm{MAP}}}
+\newcommand{\E}{\mathbb E}
+\newcommand{\V}{\mathbb V}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Ber}{\mathrm{Ber}}
+\newcommand{\XX}{\mathbb X}
+\renewcommand{\l}{\left}
+\renewcommand{\r}{\right}
+\newcommand{\iid}{\stackrel{\mathrm{i.i.d.}}{\sim}}
+\newcommand{\R}{\mathbb R}
+\renewcommand{\P}{\mathds{P}}
+\newcommand{\se}{\mathrm{se}}
+\newcommand{\tr}{\intercal}
+\newcommand{\mse}{\mathrm{MSE}}
+\newcommand{\LS}{{\text{LS}}}
+\newcommand{\beq}{\begin{equation}}
+\newcommand{\eeq}{\end{equation}}
+\def\beqs#1\eeqs{%
+    \begin{equation}\begin{split}%
+    #1%
+    \end{split}\end{equation}%
+}
+\def\beqsn#1\eeqsn{%
+    \begin{equation*}\begin{split}%
+    #1%
+    \end{split}\end{equation*}%
+}
+%\usepackage{enumitem}
+%\setlist{topsep=1.5em, itemsep=2.5em}
+
+\usepackage{tcolorbox}
+\tcbuselibrary{theorems,skins,breakable}
+
+\newcommand{\handout}[5]{
+  \noindent
+  \begin{center}
+  \framebox{
+    \vbox{
+      \hbox to 5.78in { {\bf 18.650: Fundamentals of Statistics} \hfill #2 }
+      \vspace{4mm}
+      \hbox to 5.78in { {\Large \hfill #5  \hfill} }
+      \vspace{2mm}
+      \hbox to 5.78in { {\em #3 \hfill #4} }
+    }
+  }
+  \end{center}
+  \vspace*{4mm}
+}
+
+\newcommand{\lecture}[4]{\handout{#1}{#2}{#3}{#4}{Lecture #1}}
+
+
+
+%{Theorem}{Theorem}{}{Th}
+
+\newtcbtheorem[number within=section]{thm}{Theorem}
+{
+    enhanced,
+    frame hidden,
+    titlerule=0mm,
+    toptitle=1mm,
+    bottomtitle=1mm,
+    fonttitle=\bfseries\normalsize,
+    coltitle=black,
+    colbacktitle=violet!20!white,
+    colback=violet!10!white,
+}{thm}
+\newtcbtheorem[number within=section,use counter from=thm]{prop}{Proposition}
+{
+    enhanced,
+    frame hidden,
+    titlerule=0mm,
+    toptitle=1mm,
+    bottomtitle=1mm,
+    fonttitle=\bfseries\normalsize,
+    coltitle=black,
+    colbacktitle=violet!20!white,
+    colback=violet!10!white,
+}{prop}
+\newtcbtheorem[number within=section,use counter from=thm]{defn}{Definition}
+{
+    enhanced,
+    frame hidden,
+    titlerule=0mm,
+    toptitle=1mm,
+    bottomtitle=1mm,
+    fonttitle=\bfseries\normalsize,
+    coltitle=black,
+    colbacktitle=green!20!white,
+    colback=green!10!white,
+}{defn}
+
+\newtcbtheorem[number within=section,use counter from=thm]{lma}{Lemma}
+{
+    enhanced,
+    frame hidden,
+    titlerule=0mm,
+    toptitle=1mm,
+    bottomtitle=1mm,
+    fonttitle=\bfseries\large,
+    coltitle=black,
+    colbacktitle=cyan!20!white,
+    colback=cyan!10!white,
+}{lma}
+
+\newenvironment{remark}{
+    \par
+    \vspace{5pt}
+    \begin{minipage}{\textwidth}
+        {\par\noindent{\textbf{Remark.}}}
+        \tcolorbox[blanker,breakable,left=5mm,
+        before skip=10pt,after skip=10pt,
+        borderline west={1mm}{0pt}{cyan!10!white}]
+}{
+        \endtcolorbox
+    \end{minipage}
+    \vspace{5pt}
+}
+
+\newenvironment{remarks}{
+    \par
+    \vspace{5pt}
+    \begin{minipage}{\textwidth}
+        {\par\noindent{\textbf{Remarks.}}}
+        \tcolorbox[blanker,breakable,left=5mm,
+        before skip=10pt,after skip=10pt,
+        borderline west={1mm}{0pt}{cyan!10!white}]
+}{
+        \endtcolorbox
+    \end{minipage}
+    \vspace{5pt}
+}
+
+\newenvironment{example}{%
+    \par
+    \vspace{5pt}
+	\begin{minipage}{\textwidth}
+		\noindent\textbf{Example.}
+		\tcolorbox[blanker,breakable,left=5mm,parbox=false,
+	    before upper={\parindent15pt},
+	    after skip=10pt,
+		borderline west={1mm}{0pt}{cyan!10!white}]
+}{%
+		\endtcolorbox
+	\end{minipage}
+    \vspace{5pt}
+}
